@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package topupService;
+
+
+option go_package = "topupService";
+
+
+
+
+message TopupRequestType {
+    string      username     =1;
+    string      password     =2;
+    string      msisdn       =3;
+    string      pin          =4;
+    string      mob_no       =5;
+    int32	    amount       =6;
+    int32	    type		 =7;
+    string      desc         =8;
+    string      add_data     =9;
+}
+
+message TopupResponseType {
+	int32		resp_code	 	 =1;
+    string      ref     		 =2;
+    string      serial           =3;
+}
+
+service TopupService {
+    rpc Topup( TopupRequestType ) returns(TopupResponseType) {}
+}

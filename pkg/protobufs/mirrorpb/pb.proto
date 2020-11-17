@@ -1,0 +1,136 @@
+
+syntax = "proto3";
+
+package hafhashtad.pb;
+
+option go_package = "pb";
+
+
+message Value {
+  oneof kind {
+    Null null_value = 1;
+    double number_value = 2;
+    string string_value = 3;
+    bool bool_value = 4;
+    Struct struct_value = 5;
+    int64 int_value = 6;
+  }
+}
+
+enum Null {
+  NULL_VALUE = 0;
+}
+
+message Struct {
+  map<string, Value> Fields = 1;
+}
+
+
+message InternalRequest {
+  int32  txnType = 1;
+  Struct request = 2;
+}
+
+
+message InternalResponse {
+  Struct response = 1;
+  string OriginAddress = 2;
+}
+
+message TopupRequestType {
+  string      username     =1;
+  string      password     =2;
+  string      msisdn       =3;
+  string      pin          =4;
+  string      mob_no       =5;
+  int32	    amount       =6;
+  int32	    type		 =7;
+  string      desc         =8;
+  string      add_data     =9;
+}
+
+message TopupResponseType {
+int32		resp_code	 	 =1;
+  string      ref     		 =2;
+  string      serial           =3;
+}
+
+
+message GeneralRequest {
+  string mobileNumber       = 1;
+  string clientIP           = 2;
+  string imei               = 3;
+  string devid              = 4;
+  string platform           = 5;
+  string deviceInfo         = 6;
+  string osVersion          = 7;
+  string trackingCode       = 8;
+  int32  appVersion         = 9;
+  string paymentChannel     = 10;
+  double OfferAmount        = 11;
+  int32  txntype            = 12;
+  string mType              = 13;
+  string data1              = 14;
+  string data2              = 15;
+  string microserviceData   = 16;
+  string microserviceId     = 17; 
+  Struct request            = 18;
+}
+
+message GeneralResponse {
+  int64	 resCode         = 1;
+  string   message         = 2;
+  Struct   response        = 3;
+}
+
+
+service TopupService {
+  rpc Topup( TopupRequestType ) returns(TopupResponseType) {}
+}
+
+service OrderAdapter {
+  rpc UpdateOrder(InternalRequest) returns (InternalResponse) {}
+}
+
+service ArbiterAdapter {
+    rpc CheckRepetition(InternalRequest) returns (InternalResponse) {}
+}
+
+
+service ClubAdapter {
+    rpc GetClubInfo( InternalRequest) returns (InternalResponse) {}
+}
+
+
+service CampaignAdapter {
+    rpc InternalMessage(InternalRequest) returns (InternalResponse) {}
+    rpc GetCampaignDiscount(stream InternalRequest) returns (stream InternalResponse) {}
+}
+
+
+service SettlementAdapter {
+  
+  rpc SettleBill(InternalRequest) returns (InternalResponse) {}
+ 
+}
+
+
+
+service TxnAdapter {
+  
+  rpc CheckTxnPermission(GeneralRequest) returns (GeneralResponse) {}
+  // rpc BidiTxnPermission(stream GeneralRequest) returns (stream GeneralResponse) {}
+  
+  rpc GetTxnToken(GeneralRequest) returns (GeneralResponse) {}
+
+  rpc CheckTxnIsDone(GeneralRequest) returns (GeneralResponse) {}
+  // rpc BidiCheckTXNIsDone(stream GeneralRequest) returns (stream GeneralResponse) {}
+
+  rpc TxnAdvice(GeneralRequest) returns (GeneralResponse) {}
+  // rpc BidiTXNAdvice(GeneralRequest) returns (GeneralResponse) {}
+  //
+  rpc TxnReverse(GeneralRequest) returns (GeneralResponse) {}
+  // rpc BidiTXNReverse(GeneralRequest) returns (GeneralResponse) {}
+  // rpc SettlePayment(GeneralRequest) returns (GeneralResponse) {}
+ 
+}
