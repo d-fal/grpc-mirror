@@ -60,7 +60,7 @@ func main() {
 
 	loggerMS, _ := utils.GetGRPCClient(conf.GRPCService{
 		Host: &url1,
-		Port: 50054,
+		Port: 50056,
 	})
 	loggerCtx := topupService.NewTopupServiceClient(loggerMS)
 
